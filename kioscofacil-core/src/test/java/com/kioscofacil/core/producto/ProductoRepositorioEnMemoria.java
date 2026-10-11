@@ -13,7 +13,7 @@ import java.util.Optional;
  *
  * @author odlanierbermudez
  */
-class ProductoRepositorioEnMemoria implements ProductoRepositorio {
+public class ProductoRepositorioEnMemoria implements ProductoRepositorio {
 
     private final Map<CodigoBarras, Producto> productos = new LinkedHashMap<>();
 

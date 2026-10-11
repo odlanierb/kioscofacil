@@ -37,4 +37,12 @@ public record Dinero(BigDecimal monto) {
         return new Dinero(monto.multiply(BigDecimal.valueOf(cantidad)));
     }
 
+    public Dinero restar(Dinero otro) {
+        return new Dinero(monto.subtract(otro.monto));
+    }
+
+    public boolean esMenorQue(Dinero otro) {
+        return monto.compareTo(otro.monto) < 0;
+    }
+
 }
