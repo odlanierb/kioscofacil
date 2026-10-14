@@ -6,12 +6,13 @@ package com.kioscofacil.core.venta;
 
 import com.kioscofacil.core.compartido.Dinero;
 import com.kioscofacil.core.compartido.ReglaDeNegocioException;
+import com.kioscofacil.core.producto.CodigoBarras;
 import com.kioscofacil.core.producto.Producto;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-
 /**
  *
  * @author odlanierbermudez
@@ -23,9 +24,7 @@ public class Venta {
     private Cobro cobro;
 
     public void agregar(Producto producto, int cantidad) {
-        if (estaCobrada()) {
-            throw new ReglaDeNegocioException("La venta ya fue cobrada, no se puede modificar");
-        }
+        verificarQueSePuedeModificar();
         if (cantidad <= 0) {
             throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
         }
@@ -37,6 +36,24 @@ public class Venta {
             }
         }
         lineas.add(LineaVenta.de(producto, cantidad));
+    }
+
+    /** Saca de la venta la línea de ese producto, sin importar la cantidad. */
+    public void quitar(CodigoBarras codigo) {
+        Objects.requireNonNull(codigo);
+        verificarQueSePuedeModificar();
+        lineas.remove(posicionDe(codigo));
+    }
+
+    /** Cambia la cantidad de la línea de ese producto. Para sacarla, usar quitar. */
+    public void cambiarCantidad(CodigoBarras codigo, int cantidad) {
+        Objects.requireNonNull(codigo);
+        verificarQueSePuedeModificar();
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
+        }
+        int posicion = posicionDe(codigo);
+        lineas.set(posicion, lineas.get(posicion).conCantidad(cantidad));
     }
 
     public Cobro cobrar(MedioPago medio, Dinero recibido) {
@@ -87,5 +104,21 @@ public class Venta {
             total = total.sumar(linea.subtotal());
         }
         return total;
+    }
+
+    private void verificarQueSePuedeModificar() {
+        if (estaCobrada()) {
+            throw new ReglaDeNegocioException("La venta ya fue cobrada, no se puede modificar");
+        }
+    }
+
+    private int posicionDe(CodigoBarras codigo) {
+        for (int i = 0; i < lineas.size(); i++) {
+            if (lineas.get(i).codigo().equals(codigo)) {
+                return i;
+            }
+        }
+        throw new ReglaDeNegocioException(
+                "El producto " + codigo.valor() + " no está en la venta");
     }
 }

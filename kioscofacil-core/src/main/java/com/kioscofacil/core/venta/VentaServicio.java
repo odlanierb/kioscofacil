@@ -51,4 +51,8 @@ public class VentaServicio {
     public List<VentaRealizada> ventasDelDia(LocalDate dia) {
         return repositorio.listarEntre(dia.atStartOfDay(), dia.plusDays(1).atStartOfDay());
     }
+    
+    public ResumenDelDia resumenDelDia(LocalDate dia) {
+        return ResumenDelDia.de(dia, ventasDelDia(dia));
+    }
 }

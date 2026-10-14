@@ -15,6 +15,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>26</maven.compiler.release>
         <junit.version>6.1.0</junit.version>
+        <sqlite.version>3.53.0.0</sqlite.version>
+        <javafx.version>27</javafx.version>
     </properties>
     <dependencyManagement>
         <dependencies>
