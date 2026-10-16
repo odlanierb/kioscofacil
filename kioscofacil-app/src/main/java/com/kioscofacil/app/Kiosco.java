@@ -22,14 +22,15 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+
 /**
  *
  * @author odlanierbermudez
  */
 public final class Kiosco implements Respaldador, AutoCloseable {
 
-    private static final DateTimeFormatter FORMATO_NOMBRE_RESPALDO =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+    private static final DateTimeFormatter FORMATO_NOMBRE_RESPALDO
+            = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
     private final BaseDeDatos baseDeDatos;
     private final Clock reloj;
@@ -54,10 +55,10 @@ public final class Kiosco implements Respaldador, AutoCloseable {
         crearCarpeta(archivoDeBaseDeDatos.toAbsolutePath().getParent());
 
         BaseDeDatos baseDeDatos = BaseDeDatos.abrir("jdbc:sqlite:" + archivoDeBaseDeDatos);
-        ProductoServicio productos =
-                new ProductoServicio(new ProductoRepositorioSqlite(baseDeDatos));
-        StockServicio stock =
-                new StockServicio(new StockRepositorioSqlite(baseDeDatos), productos);
+        ProductoServicio productos
+                = new ProductoServicio(new ProductoRepositorioSqlite(baseDeDatos));
+        StockServicio stock
+                = new StockServicio(new StockRepositorioSqlite(baseDeDatos), productos);
         VentaServicio ventas = new VentaServicio(
                 new VentaRepositorioSqlite(baseDeDatos),
                 reloj,
@@ -67,8 +68,8 @@ public final class Kiosco implements Respaldador, AutoCloseable {
     }
 
     /**
-     * Guarda en carpetaDestino una copia de la base de datos, con la fecha y la hora
-     * en el nombre del archivo. Devuelve el archivo creado.
+     * Guarda en carpetaDestino una copia de la base de datos, con la fecha y la
+     * hora en el nombre del archivo. Devuelve el archivo creado.
      */
     @Override
     public Path respaldar(Path carpetaDestino) {
@@ -79,6 +80,14 @@ public final class Kiosco implements Respaldador, AutoCloseable {
         Path archivo = carpetaDestino.resolve(nombre);
         respaldo.respaldarEn(archivo);
         return archivo;
+    }
+
+    /**
+     * Copia la base de datos en ese archivo, que no debe existir. Lo usa el
+     * respaldo automático.
+     */
+    void copiarBaseEn(Path archivo) {
+        respaldo.respaldarEn(archivo);
     }
 
     private static void crearCarpeta(Path carpeta) {
